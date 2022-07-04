@@ -1,20 +1,40 @@
 import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
-function Sort({ selectedSort, onClickSort, order, onClickOrder }) {
+import { setSortItem } from '../redux/slices/filterSlice';
+
+export const list = [
+  { name: 'популярности', sortProperty: 'rating' },
+  { name: 'цене', sortProperty: 'price' },
+  { name: 'алфавиту', sortProperty: 'title' },
+];
+
+function Sort({ order, onClickOrder }) {
+  const dispatch = useDispatch();
+  const sortRef = React.useRef();
+  const selectedSort = useSelector((state) => state.filter.sortItem);
+
   const [isVisible, setIsVisible] = React.useState(false);
-  const list = [
-    { name: 'популярности', sortProperty: 'rating' },
-    { name: 'цене', sortProperty: 'price' },
-    { name: 'алфавиту', sortProperty: 'title' },
-  ];
 
-  const onClickListItem = (id) => {
-    onClickSort(id);
+  const onClickListItem = (obj) => {
+    dispatch(setSortItem(obj));
     setIsVisible(false);
   };
 
+  React.useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.path.includes(sortRef.current)) {
+        setIsVisible(false);
+      }
+    };
+
+    document.body.addEventListener('click', handleClickOutside);
+
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
+
   return (
-    <div className="sort">
+    <div ref={sortRef} className="sort">
       <div className="sort__label">
         <svg
           onClick={(order) => onClickOrder(!order)}
