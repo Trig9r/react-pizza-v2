@@ -12,8 +12,8 @@ const cartSlice = createSlice({
     addItem(state, action: PayloadAction<CartItem>) {
       const findItem = state.items.find(
         (obj) =>
-          obj.id === action.payload.id ||
-          obj.size === action.payload.size ||
+          obj.id === action.payload.id &&
+          obj.size === action.payload.size &&
           obj.type === action.payload.type,
       );
 
