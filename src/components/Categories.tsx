@@ -2,7 +2,12 @@ import React from 'react';
 
 export const allCategories = ['Все', 'Мясные', 'Вегетарианские', 'Гриль', 'Острые', 'Закрытые'];
 
-function Categories({ selectedId, onClickCategory }) {
+type CategoriesProps = {
+  selectedId: number;
+  onChangeCategory: (id: number) => void;
+};
+
+const Categories: React.FC<CategoriesProps> = React.memo(({ selectedId, onChangeCategory }) => {
   return (
     <div className="categories">
       <ul>
@@ -10,21 +15,15 @@ function Categories({ selectedId, onClickCategory }) {
           return (
             <li
               key={id}
-              onClick={() => onClickCategory(id)}
+              onClick={() => onChangeCategory(id)}
               className={id === selectedId ? 'active' : ''}>
               {item}
             </li>
           );
         })}
-        {/* <li className="active">Все</li>
-        <li>Мясные</li>
-        <li>Вегетарианская</li>
-        <li>Гриль</li>
-        <li>Острые</li>
-        <li>Закрытые</li> */}
       </ul>
     </div>
   );
-}
+});
 
 export default Categories;

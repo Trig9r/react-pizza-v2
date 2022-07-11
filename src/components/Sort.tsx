@@ -1,29 +1,40 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
-import { setSortItem } from '../redux/slices/filterSlice';
+import { setSort } from '../redux/filter/slice';
+import { Sort as SortType, SortPropertyEnum } from '../redux/filter/types';
 
-export const list = [
-  { name: 'популярности', sortProperty: 'rating' },
-  { name: 'цене', sortProperty: 'price' },
-  { name: 'алфавиту', sortProperty: 'title' },
+type SortItem = {
+  name: string;
+  sortProperty: SortPropertyEnum;
+};
+
+export const list: SortItem[] = [
+  { name: 'популярности', sortProperty: SortPropertyEnum.RATING },
+  { name: 'цене', sortProperty: SortPropertyEnum.PRICE },
+  { name: 'алфавиту', sortProperty: SortPropertyEnum.TITLE },
 ];
 
-function Sort({ order, onClickOrder }) {
+type SortProps = {
+  value: SortType;
+  order: boolean;
+  onClickOrder: (order: boolean) => void;
+};
+
+const Sort: React.FC<SortProps> = React.memo(({ value, order, onClickOrder }) => {
   const dispatch = useDispatch();
-  const sortRef = React.useRef();
-  const selectedSort = useSelector((state) => state.filter.sortItem);
+  const sortRef = React.useRef<HTMLDivElement>(null);
 
   const [isVisible, setIsVisible] = React.useState(false);
 
-  const onClickListItem = (obj) => {
-    dispatch(setSortItem(obj));
+  const onClickListItem = (obj: SortItem) => {
+    dispatch(setSort(obj));
     setIsVisible(false);
   };
 
   React.useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (!event.path.includes(sortRef.current)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (sortRef.current && !event.composedPath().includes(sortRef.current)) {
         setIsVisible(false);
       }
     };
@@ -50,7 +61,7 @@ function Sort({ order, onClickOrder }) {
           />
         </svg>
         <b>Сортировка по:</b>
-        <span onClick={() => setIsVisible(!isVisible)}>{selectedSort.name}</span>
+        <span onClick={() => setIsVisible(!isVisible)}>{value.name}</span>
       </div>
       {isVisible && (
         <div className="sort__popup">
@@ -59,7 +70,7 @@ function Sort({ order, onClickOrder }) {
               <li
                 key={id}
                 onClick={() => onClickListItem(obj)}
-                className={selectedSort.sortProperty === obj.sortProperty ? 'active' : ''}>
+                className={value.sortProperty === obj.sortProperty ? 'active' : ''}>
                 {obj.name}
               </li>
             ))}
@@ -68,6 +79,6 @@ function Sort({ order, onClickOrder }) {
       )}
     </div>
   );
-}
+});
 
 export default Sort;

@@ -1,21 +1,47 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { addItems, minusItems, removeItems } from '../redux/slices/cartSlice';
+import clsx from 'clsx';
+import { CartItem } from '../redux/cart/types';
+import { addItem, minusItem, removeItem } from '../redux/cart/slice';
 
-const CartItem = ({ id, name, size, count, imageUrl, type, price }) => {
+type CartItemProps = {
+  id: string;
+  name: string;
+  size: number;
+  count: number;
+  imageUrl: string;
+  type: string;
+  price: number;
+};
+
+const CartItemBlock: React.FC<CartItemProps> = ({
+  id,
+  name,
+  size,
+  count,
+  imageUrl,
+  type,
+  price,
+}) => {
   const dispatch = useDispatch();
 
   const onClickPlus = () => {
-    dispatch(addItems({ id, size, type }));
+    dispatch(
+      addItem({
+        id,
+        size,
+        type,
+      } as CartItem),
+    ); //{ id, size, type }
   };
 
   const onClickMinus = () => {
-    dispatch(minusItems({ id, size, type }));
+    dispatch(minusItem(id)); //{ id, size, type }
   };
 
   const onClickRemove = () => {
     if (window.confirm('Вы действительно хотите удалить пиццу?')) {
-      dispatch(removeItems(id));
+      dispatch(removeItem(id));
     }
   };
 
@@ -32,8 +58,11 @@ const CartItem = ({ id, name, size, count, imageUrl, type, price }) => {
       </div>
       <div className="cart__item-count">
         <button
+          disabled={count === 1}
           onClick={onClickMinus}
-          className="button button--outline button--circle cart__item-count-minus">
+          className={clsx('button button--outline button--circle cart__item-count-minus', {
+            'cart__item-count-minus--disabled': count === 1,
+          })}>
           <svg
             width="10"
             height="10"
@@ -97,4 +126,4 @@ const CartItem = ({ id, name, size, count, imageUrl, type, price }) => {
   );
 };
 
-export default CartItem;
+export default CartItemBlock;
