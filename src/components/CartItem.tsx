@@ -32,16 +32,28 @@ export const CartItem: React.FC<CartItemProps> = ({
         size,
         type,
       } as CartItemType),
-    ); //{ id, size, type }
+    );
   };
 
   const onClickMinus = () => {
-    dispatch(minusItem(id)); //{ id, size, type }
+    dispatch(
+      minusItem({
+        id,
+        size,
+        type,
+      } as CartItemType),
+    );
   };
 
   const onClickRemove = () => {
     if (window.confirm('Вы действительно хотите удалить пиццу?')) {
-      dispatch(removeItem(id));
+      dispatch(
+        removeItem({
+          id,
+          size,
+          type,
+        } as CartItemType),
+      );
     }
   };
 
