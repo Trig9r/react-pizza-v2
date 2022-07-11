@@ -4,11 +4,7 @@ import qs from 'qs';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import Categories from '../components/Categories';
-import Sort from '../components/Sort';
-import Skeleton from '../components/PizzaBlock/Skeleton';
-import PizzaBlock from '../components/PizzaBlock';
-import Pagination from '../components/Pagination';
+import { Categories, Sort, Skeleton, PizzaBlock, Pagination, list } from '../components';
 
 import { allCategories } from '../components/Categories';
 
@@ -17,13 +13,15 @@ import { selectFilter } from '../redux/filter/selectors';
 import { selectPizzaData } from '../redux/pizza/selectors';
 import { setCategoryId, setCurrentPage, setFilters } from '../redux/filter/slice';
 import { fetchPizzas } from '../redux/pizza/asyncActions';
-import { SearchPizzaParams } from '../redux/pizza/types';
+import { FilterSliceState } from '../redux/filter/types';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const isMounted = React.useRef(false);
+  const isSearch = React.useRef(false);
   const [order, setOrder] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(true);
 
   const { items, status } = useSelector(selectPizzaData);
   const { categoryId, sort, currentPage, searchValue } = useSelector(selectFilter);
@@ -39,6 +37,8 @@ const Home: React.FC = () => {
   };
 
   const getPizzas = async () => {
+    setIsLoading(true);
+
     const sortBy = sort.sortProperty.replace('-', '');
     const orderBy = order ? 'asc' : 'desc';
     const category = categoryId > 0 ? String(categoryId) : '';
@@ -53,37 +53,45 @@ const Home: React.FC = () => {
         currentPage: String(currentPage),
       }),
     );
-
-    window.scrollTo(0, 0);
   };
 
-  // Если изменили параметры и был первый рендер
   React.useEffect(() => {
-    // if (isMounted.current) {
-    //   const params = {
-    //     categoryId: categoryId > 0 ? categoryId : null,
-    //     sortProperty: sort.sortProperty,
-    //     currentPage,
-    //   };
+    if (isMounted.current) {
+      const queryString = qs.stringify({
+        sortProperty: sort.sortProperty,
+        categoryId,
+        currentPage,
+      });
 
-    //   const queryString = qs.stringify(params, { skipNulls: true });
+      navigate(`?${queryString}`);
+    }
+    isMounted.current = true;
+  }, [categoryId, sort.sortProperty, currentPage, order]);
 
-    //   navigate(`/?${queryString}`);
-    // }
+  React.useEffect(() => {
+    if (window.location.search) {
+      const params = qs.parse(window.location.search.substring(1));
 
-    // const params = qs.parse(window.location.search.substring(1)) as unknown as SearchPizzaParams;
-    // const sortObj = sortList.find((obj) => obj.sortProperty === params.sortBy);
-    // dispatch(
-    //   setFilters({
-    //     searchValue: params.search,
-    //     categoryId: Number(params.category),
-    //     currentPage: Number(params.currentPage),
-    //     sort: sortObj || sortList[0],
-    //   }),
-    // );
+      const paramSort = list.find((obj) => obj.sortProperty === params.sortProperty);
 
-    getPizzas();
-    // isMounted.current = true;
+      dispatch(
+        setFilters({
+          ...params,
+          sort: paramSort,
+        } as FilterSliceState),
+      );
+      isSearch.current = true;
+    }
+  }, []);
+
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+
+    if (!isSearch.current) {
+      getPizzas();
+    }
+
+    isSearch.current = false;
   }, [categoryId, sort.sortProperty, searchValue, currentPage, order]);
 
   // Парсим параметры при первом рендере

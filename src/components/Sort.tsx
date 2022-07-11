@@ -21,7 +21,7 @@ type SortProps = {
   onClickOrder: (order: boolean) => void;
 };
 
-const Sort: React.FC<SortProps> = React.memo(({ value, order, onClickOrder }) => {
+export const Sort: React.FC<SortProps> = React.memo(({ value, order, onClickOrder }) => {
   const dispatch = useDispatch();
   const sortRef = React.useRef<HTMLDivElement>(null);
 
@@ -80,5 +80,3 @@ const Sort: React.FC<SortProps> = React.memo(({ value, order, onClickOrder }) =>
     </div>
   );
 });
-
-export default Sort;

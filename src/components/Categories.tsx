@@ -7,23 +7,23 @@ type CategoriesProps = {
   onChangeCategory: (id: number) => void;
 };
 
-const Categories: React.FC<CategoriesProps> = React.memo(({ selectedId, onChangeCategory }) => {
-  return (
-    <div className="categories">
-      <ul>
-        {allCategories.map((item, id) => {
-          return (
-            <li
-              key={id}
-              onClick={() => onChangeCategory(id)}
-              className={id === selectedId ? 'active' : ''}>
-              {item}
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  );
-});
-
-export default Categories;
+export const Categories: React.FC<CategoriesProps> = React.memo(
+  ({ selectedId, onChangeCategory }) => {
+    return (
+      <div className="categories">
+        <ul>
+          {allCategories.map((item, id) => {
+            return (
+              <li
+                key={id}
+                onClick={() => onChangeCategory(id)}
+                className={id === selectedId ? 'active' : ''}>
+                {item}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    );
+  },
+);
