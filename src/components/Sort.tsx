@@ -12,7 +12,7 @@ type SortItem = {
 export const list: SortItem[] = [
   { name: 'популярности', sortProperty: SortPropertyEnum.RATING },
   { name: 'цене', sortProperty: SortPropertyEnum.PRICE },
-  { name: 'алфавиту', sortProperty: SortPropertyEnum.TITLE },
+  { name: 'названию', sortProperty: SortPropertyEnum.TITLE },
 ];
 
 type SortProps = {

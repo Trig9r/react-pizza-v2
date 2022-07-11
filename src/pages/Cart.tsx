@@ -82,7 +82,7 @@ const Cart: React.FC = () => {
             <DialogTitle id="alert-dialog-title"></DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
-                Вы действительно хотите удалить корзину?
+                Вы действительно хотите очистить корзину?
               </DialogContentText>
             </DialogContent>
             <DialogActions>
